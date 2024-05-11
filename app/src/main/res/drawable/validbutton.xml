@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Couleur de fond par défaut -->
+    <item>
+        <shape>
+            <corners android:radius="20dp"/>
+
+            <solid android:color="#BD9B00" />
+        </shape>
+    </item>
+</selector>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="FuturisticProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/futuristic_progress_bar_drawable</item>
+        <item name="android:indeterminateDrawable">@drawable/futuristic_progress_bar_drawable</item>
+        <item name="android:minHeight">10dp</item>
+        <item name="android:maxHeight">20dp</item>
+    </style>
+
+</resources>

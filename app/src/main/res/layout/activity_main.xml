@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/containerMain"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/activity_base" />
+
+    <ImageView
+        android:id="@+id/imageView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/logogrey" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_below="@id/imageView15"
+        android:layout_marginStart="70dp"
+        android:layout_marginEnd="70dp">
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="wrap_content"
+            android:layout_height="2dp"
+            android:background="@color/white"
+            />
+
+        <!-- TextView -->
+        <TextView
+            android:id="@+id/TextPrinc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/orbitron_medium"
+            android:text="@string/Texte_Debut"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/tailleTitre" />
+
+        <View
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="2dp"
+            android:background="@color/white"/>
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/BtnParam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        android:onClick="onClickParam"
+        android:src="@drawable/parametre" />
+
+    <ImageButton
+        android:id="@+id/LangBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_toStartOf="@id/BtnParam"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/transparent"
+        android:onClick="onChangeLanguage"
+        android:src="@drawable/drapeau_anglais" />
+
+</RelativeLayout>

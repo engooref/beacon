@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Quiz Beacon</string>
+    <string name="Texte_Debut">Please launch the settings to start</string>
+    <string name="Texte_AttentePrincipalEsp">Waiting for access key</string>
+    <string name="Texte_AttentePrincipal">Please tap the screen to start</string>
+    <string name="Texte_ChargementPrincipal">Access card reading</string>
+    <string name="Texte_ButtonPrincipal">Welcome%s, please press the button</string>
+    <string name="Texte_ErreurPrincipal">Premature card removal, please try again</string>
+    <string name="Texte_AutoriserPrincipal">"Starting in 0 "</string>
+    <string name="Texte_RetraitCarte">Please remove the access card</string>
+    <string name="Texte_ButtonValider">Validate</string>
+    <string name="Texte_Finish">Time\'s up</string>
+    <string name="Text_NbPointRep">"Your score is: "</string>
+    <string name="Text_NbQues">"Your total number of questions answered is : "</string>
+    <string name="Text_Nbmail">Check the information above and press the button to validate your quiz</string>
+    <string name="mmss">1:30</string>
+    <string name="Verif_Info">Player Information</string>
+    <string name="texte_secondes">seconds</string>
+    <string name="texte_seconde">second</string>
+</resources>

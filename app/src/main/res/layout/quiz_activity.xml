@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <include layout="@layout/activity_base" />
+    <!-- Timer -->
+    <ProgressBar
+        android:id="@+id/timerBar"
+        style="@style/FuturisticProgressBar"
+        android:layout_width="match_parent"
+        android:layout_height="15dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="250dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="250dp"
+        android:alpha="0.95"
+        android:max="100"
+        android:progress="50" />
+
+    <!-- TextView Timer -->
+    <TextView
+        android:id="@+id/TVTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="03:00"
+        android:textColor="@android:color/white"
+        android:textSize="30sp"
+        android:layout_marginTop="20dp"
+        android:layout_alignTop="@id/timerBar"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/timerBar"
+        android:layout_marginBottom="16dp"
+    />
+
+    <!-- Réponses -->
+    <LinearLayout
+        android:id="@+id/answersLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal">
+
+        <!-- TextView Question -->
+        <TextView
+            android:id="@+id/TVQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="26dp"
+            android:layout_marginBottom="16dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="Question"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/tailleQuestion" />
+
+        <!-- Première Ligne de Réponses -->
+        <LinearLayout
+            android:id="@+id/firstRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRep1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="1"
+                android:alpha="0.9"
+                android:background="@drawable/futurist_degrad"
+                android:onClick="onRepClick"
+                android:text="Réponse 1"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/tailleReponse" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRep2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Réponse 2"
+                android:alpha="0.9"
+                android:textColor="@android:color/white"
+                android:onClick="onRepClick"
+                android:background="@drawable/futurist_degrad"
+                android:textSize="@dimen/tailleReponse"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="32dp"/>
+
+        </LinearLayout>
+
+        <!-- Deuxième Ligne de Réponses -->
+        <LinearLayout
+            android:id="@+id/secondRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRep3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Réponse 3"
+                android:alpha="0.9"
+                android:textColor="@android:color/white"
+                android:background="@drawable/futurist_degrad"
+                android:textSize="@dimen/tailleReponse"
+                android:onClick="onRepClick"
+                android:layout_marginStart="32dp"
+                android:layout_marginEnd="8dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnRep4"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:alpha="0.9"
+                android:onClick="onRepClick"
+                android:text="Réponse 4"
+                android:textColor="@android:color/white"
+                android:background="@drawable/futurist_degrad"
+                android:textSize="@dimen/tailleReponse"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="32dp"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Bouton Valider -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/BtnValid"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="60dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingStart="7dp"
+        android:paddingEnd="7dp"
+        android:background="@drawable/validbutton"
+        android:onClick="onValidClick"
+        android:text="@string/Texte_ButtonValider"
+        android:textAlignment="center"
+        android:textColor="@android:color/white"
+        android:textSize="34sp" />
+
+</RelativeLayout>

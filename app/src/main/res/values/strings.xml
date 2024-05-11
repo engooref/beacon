@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Verif_Info">Informations sur le joueur</string>
+    <string name="mmss">1:30</string>
+    <string name="Text_Nbmail">Vérifiez les infos ci-dessus et appuyez sur le bouton pour valider votre quiz</string>
+    <string name="Text_NbPointRep">"Votre nombre de points s'élève à : "</string>
+    <string name="Text_NbQues">"Votre nombre de questions répondues s'élève à : "</string>
+    <string name="Texte_Finish">Temps écoulé</string>
+    <string name="Texte_ButtonValider">Valider</string>
+    <string name="Texte_RetraitCarte">Veuillez retirer la carte d\'accès</string>
+    <string name="Texte_AutoriserPrincipal">"Commencement dans 0 "</string>
+    <string name="Texte_ErreurPrincipal">Retrait prématuré de la carte, veuillez réessayer</string>
+    <string name="Texte_ButtonPrincipal">Bienvenue%s, veuillez appuyer sur le bouton</string>
+    <string name="Texte_ChargementPrincipal">Lecture de la carte d\'accès</string>
+    <string name="Texte_AttentePrincipal">Veuillez appuyer sur l\'écran pour commencer</string>
+    <string name="Texte_AttentePrincipalEsp">En attente de la clef d\'accès</string>
+    <string name="Texte_Debut">Veuillez lancer les paramètres pour le démarrage</string>
+    <string name="app_name">Quiz Beacon</string>
+    <string name="texte_secondes">secondes</string>
+    <string name="texte_seconde">seconde</string>
+</resources>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Couleur de fond par défaut -->
+    <item>
+        <shape>
+            <corners android:topLeftRadius="50dp" android:topRightRadius="20dp"
+                android:bottomLeftRadius="20dp" android:bottomRightRadius="50dp"/>
+
+            <gradient
+                android:startColor="#F69000"
+                android:endColor="#9F4A00"
+                android:type="linear"/>
+        </shape>
+    </item>
+</selector>

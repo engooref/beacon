@@ -1,0 +1,7 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="tailleTitre">40sp</dimen>
+    <dimen name="marginBottomButton">10dp</dimen>
+    <dimen name="tailleQuestion">40sp</dimen>
+    <dimen name="tailleReponse">30sp</dimen>
+</resources>

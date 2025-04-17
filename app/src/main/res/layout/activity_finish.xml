@@ -39,25 +39,7 @@
             android:textSize="@dimen/tailleReponse" /> <!-- Style holographique -->
 
 
-        <EditText
-            android:id="@+id/editPseudoUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
-            android:layout_marginEnd="16dp"
-            android:hint="Discord Username"
-            android:textSize="@dimen/tailleReponse" /> <!-- Style holographique -->
-
-        <EditText
-            android:id="@+id/editEmailUser"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            android:textColorHint="#FFFFFF"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:textSize="@dimen/tailleReponse" />
+        <!-- Style holographique -->
 
         <!-- Style holographique -->
 

@@ -4,7 +4,7 @@
     <string name="Texte_AttentePrincipalEsp">Waiting for access key</string>
     <string name="Texte_AttentePrincipal">Please tap the screen to start</string>
     <string name="Texte_ChargementPrincipal">Access card reading</string>
-    <string name="Texte_ButtonPrincipal">Welcome%s, please press the button</string>
+    <string name="Texte_ButtonPrincipal">Welcome, please press the button</string>
     <string name="Texte_ErreurPrincipal">Premature card removal, please try again</string>
     <string name="Texte_AutoriserPrincipal">"Starting in 0 "</string>
     <string name="Texte_RetraitCarte">Please remove the access card</string>

@@ -1,5 +1,6 @@
 package com.example.quizpirate.Controllers.MainPackage.Activity
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -7,17 +8,25 @@ import android.os.CountDownTimer
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import com.example.quizpirate.Models.BddClass
+import androidx.lifecycle.lifecycleScope
+import com.example.quizpirate.Controllers.BDD.DAO.UserDao
+import com.example.quizpirate.Controllers.BDD.DAO.UserResponseDao
+import com.example.quizpirate.Controllers.BDD.DAO.UserTempsDao
+import com.example.quizpirate.Controllers.BDD.Entity.UserTemps
+import com.example.quizpirate.Controllers.MainPackage.Activity.MainActivity.Companion.bluetooth
 import com.example.quizpirate.R
-import java.util.regex.Pattern
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class FinishActivity : BaseActivity() {
 
     private lateinit var  handle : TextView
-    private lateinit var pseudo : TextView
-    private lateinit var email : TextView
     private lateinit var valid : Button
 
+    private lateinit var userDao: UserDao
+    private lateinit var userResponseDao: UserResponseDao
+    private lateinit var userTempsDao : UserTempsDao
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_finish)
@@ -27,14 +36,13 @@ class FinishActivity : BaseActivity() {
         findViewById<TextView>(R.id.TVNbQues).text = MainActivity.res.getString(R.string.Text_NbQues) + intent.getIntExtra("question", 0).toString()
 
         handle = findViewById(R.id.editHandleUser)
-        pseudo = findViewById(R.id.editPseudoUser)
-        email = findViewById(R.id.editEmailUser)
 
-        (MainActivity.user?.name ?: handle.text).also { handle.text = it }
-        (MainActivity.user?.pseudoDiscord ?: pseudo.text).also { pseudo.text = it }
-        (MainActivity.user?.info ?: email.text).also { email.text = it }
+        handle.text = ""
         findViewById<TextView>(R.id.TVInfVef).text = MainActivity.res.getString(R.string.Text_Nbmail)
 
+        userDao = MainActivity.db.userDao()
+        userResponseDao = MainActivity.db.userReponseDao()
+        userTempsDao = MainActivity.db.userTempsDao()
         configTimer()
     }
 
@@ -59,92 +67,57 @@ class FinishActivity : BaseActivity() {
     }
 
     fun onValid(it : View) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            val userHandle = handle.text.toString()
 
-        var error = false
-        // Vérifiez si les champs sont remplis correctement
-        if (handle.text.isEmpty()) {
-            handle.error = "L'handle est requis"
-            error = true
-        }
+            // Recherche d'un utilisateur existant avec le même handle
+            val existingUser = userDao.getUserByName(userHandle)
 
-        if (pseudo.text.isEmpty()) {
-            pseudo.error = "Le pseudo Discord est requis"
-            error = true
-        }
+            // Un utilisateur avec ce handle existe déjà.
+            // On considère que MainActivity.user est l'utilisateur temporaire (vide) créé au lancement.
+            if (existingUser != null) {
+                // Récupère toutes les réponses associées à l'utilisateur temporaire
+                val tempUserResponses =
+                    userResponseDao.getResponsesForUser(MainActivity.user.usr_id)
 
-        // Définissez le pattern d'expression régulière pour un email
-        val pattern: Pattern = Pattern.compile(
-            "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,}$",
-            Pattern.CASE_INSENSITIVE
-        )
+                // Pour chaque réponse, on incrémente le compteur de tentatives (try) et on change l'id utilisateur pour l'existant
+                tempUserResponses.forEach { response ->
+                    val updatedResponse = response.copy(
+                        usre_nbretry = response.usre_nbretry + 1,
+                        usre_usr_id = existingUser.usr_id
+                    )
+                    userResponseDao.deleteUserResponse(response)
+                    userResponseDao.insertUserReponse(updatedResponse)
+                }
 
-        if (email.text.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email.text.toString()).matches()) {
-            email.error = "Une adresse email valide est requis"
-            error = true
-        }
-
-        if (error)
-            return
-
-        val getUser = {
-            MainActivity.bdd!!.select(
-                "SELECT * from ${BddClass.Companion.TABLE.USER.TABLE_NAME} " +
-                        "where ${BddClass.Companion.TABLE.USER.TABLE_NAME}.${BddClass.Companion.TABLE.USER.NAME}='${handle.text}'"
-            ) {
-                MainActivity.user = BddClass.Companion.User(
-                    it.getInt(BddClass.Companion.TABLE.USER.ID),
-                    it.getString(BddClass.Companion.TABLE.USER.NAME),
-                    it.getString(BddClass.Companion.TABLE.USER.DISCORD),
-                    it.getString(BddClass.Companion.TABLE.USER.INFO),
-                    it.getInt(BddClass.Companion.TABLE.USER.NBRETRY)
-                )
-
-            }
-        }
-
-        if (MainActivity.user == null) {
-            getUser()
-
-            if (MainActivity.user == null) {
-                MainActivity.bdd!!.insert("insert into ${BddClass.Companion.TABLE.USER.TABLE_NAME} " +
-                        "(${BddClass.Companion.TABLE.USER.NAME}, ${BddClass.Companion.TABLE.USER.DISCORD}, ${BddClass.Companion.TABLE.USER.INFO}, " +
-                        "${BddClass.Companion.TABLE.USER.NBRETRY}, ${BddClass.Companion.TABLE.USER.MAILENV}, ${BddClass.Companion.TABLE.USER.LANG}, ${BddClass.Companion.TABLE.USER.NBMAIL}) " +
-                        "VALUES ('${handle.text}', '${pseudo.text}', '${email.text}', 1, 'N', '${MainActivity.res.configuration.locales[0].language.uppercase()}', 1)")
+                // On supprime l'utilisateur temporaire
+                userDao.deleteUser(MainActivity.user)
+                // On utilise l'utilisateur existant pour la suite
+                MainActivity.user = existingUser
+                existingUser.usr_nbretry += 1
             } else {
-                MainActivity.user!!.nbRetry++
-                MainActivity.bdd!!.update("update ${BddClass.Companion.TABLE.USER.TABLE_NAME} set " +
-                        "${BddClass.Companion.TABLE.USER.INFO} = '${MainActivity.user!!.info}', ${BddClass.Companion.TABLE.USER.NAME} = '${MainActivity.user!!.name}', " +
-                        "${BddClass.Companion.TABLE.USER.DISCORD} = '${MainActivity.user!!.pseudoDiscord}', " +
-                        "${BddClass.Companion.TABLE.USER.NBRETRY} = ${MainActivity.user!!.nbRetry}, " +
-                        "${BddClass.Companion.TABLE.USER.MAILENV} = 'N', " +
-                        "${BddClass.Companion.TABLE.USER.LANG} = '${MainActivity.res.configuration.locales[0].language.uppercase()}'" +
-                        " where ${BddClass.Companion.TABLE.USER.ID} = ${MainActivity.user!!.id}")
-
+                MainActivity.user.usr_name = userHandle
+                MainActivity.user.usr_lang = MainActivity.res.configuration.locales[0].language
             }
+            // Insertion dans la table USER_TEMPS
+            val userTempsRecord = UserTemps(
+                ust_usr_id = MainActivity.user.usr_id,
+                ust_usr_retry = MainActivity.user.usr_nbretry,
+                ust_temp = intent.getStringExtra("temps") ?: "",
+                ust_point = intent.getIntExtra("point", 0)
+            )
+            userTempsDao.insertUserTemps(userTempsRecord)
+
+            userDao.updateUser(MainActivity.user)
+            // Finalisation de l'activité
+            val resultIntent = Intent()
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
         }
-
-        getUser()
-
-        intent.getStringExtra("sqlText")?.let {
-            var text = it.replace("userId", MainActivity.user!!.id.toString())
-            text = text.replace("nbRetry", MainActivity.user!!.nbRetry.toString())
-            MainActivity.bdd!!.insert(text)
-        }
-
-        val text = "insert into ${BddClass.Companion.TABLE.USER_TEMPS.TABLE_NAME} " +
-                "(${BddClass.Companion.TABLE.USER_TEMPS.USER_ID}, ${BddClass.Companion.TABLE.USER_TEMPS.RETRY}, ${BddClass.Companion.TABLE.USER_TEMPS.TEMPS}," +
-                "${BddClass.Companion.TABLE.USER_TEMPS.POINTS}) " +
-                "VALUES (${MainActivity.user!!.id}, ${MainActivity.user!!.nbRetry}, '${intent.getStringExtra("temps")}'," +
-                "${intent.getIntExtra("point", 0)})"
-        MainActivity.bdd!!.insert(text)
-
-        val resultIntent = Intent()
-        setResult(Activity.RESULT_OK, resultIntent)
-        finish()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        MainActivity.esp32?.sendMessage("4")
+        MainActivity.bluetooth?.write("4")
     }
 }

@@ -4,7 +4,7 @@
     <string name="Texte_AttentePrincipalEsp">En attente de la clef d\'accès</string>
     <string name="Texte_AttentePrincipal">Veuillez appuyer sur l\'écran pour commencer</string>
     <string name="Texte_ChargementPrincipal">Lecture de la carte d\'accès</string>
-    <string name="Texte_ButtonPrincipal">Bienvenue%s, veuillez appuyer sur le bouton</string>
+    <string name="Texte_ButtonPrincipal">Bienvenue, veuillez appuyer sur le bouton</string>
     <string name="Texte_ErreurPrincipal">Retrait prématuré de la carte, veuillez réessayer</string>
     <string name="Texte_AutoriserPrincipal">"Commencement dans 0 "</string>
     <string name="Texte_RetraitCarte">Veuillez retirer la carte d\'accès</string>

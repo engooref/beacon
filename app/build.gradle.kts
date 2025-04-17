@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    kotlin("kapt") // Active kapt
 }
 
 android {
@@ -56,7 +57,9 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    implementation("mysql:mysql-connector-java:5.1.49")
-
+    implementation("androidx.room:room-runtime:2.5.0")
+    implementation("com.opencsv:opencsv:5.7.1")
+    implementation("androidx.room:room-ktx:2.5.0")
+    kapt("androidx.room:room-compiler:2.5.0")
 
 }

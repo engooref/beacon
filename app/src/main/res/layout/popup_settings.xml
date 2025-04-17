@@ -6,13 +6,13 @@
 
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:gravity="center"
     android:orientation="vertical"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
-    android:gravity="center"
-    android:textAlignment="center"
-    android:focusable="true"
-    android:focusableInTouchMode="true"  >
+    android:textAlignment="center">
 
     <TextView
         android:id="@+id/textView"
@@ -35,56 +35,61 @@
         tools:text="@string/mmss" />
 
     <View
+        android:id="@+id/divider6"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/design_default_color_on_secondary" />
+
+    <Button
+        android:id="@+id/btnAddQues"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickImport"
+        android:text="Ajouter les Questions" />
+
+    <Button
+        android:id="@+id/BtnExport"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#4CAF50"
+        android:maxLines="1"
+        android:onClick="onClickExport"
+        android:text="Exporter les Résultats"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/BtnSuppBDD"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/red"
+        android:onClick="onClickDeleteBdd"
+        android:text="Vider la BDD" />
+
+    <View
         android:id="@+id/divider3"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/design_default_color_on_secondary" />
 
-    <CheckBox
-        android:id="@+id/chbEsp"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Utilisation ESP"
-        android:textSize="20sp" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/editIPEsp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:ems="10"
-        android:inputType="text"
-        android:text="192.168.1.18" />
+        <Button
+            android:id="@+id/btnConEsp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onClickBluethooth"
+            android:text="Connexion ESP" />
 
-    <EditText
-        android:id="@+id/editPortEsp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:ems="10"
-        android:inputType="number"
-        android:text="5000" />
+        <View
+            android:id="@+id/status_indicator"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/circle_disconnected"/>
 
-    <View
-        android:id="@+id/divider5"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/design_default_color_on_secondary" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Mot de passe"
-        android:textSize="20sp" />
-
-    <EditText
-        android:id="@+id/mdp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:ems="10"
-        android:inputType="textPassword" />
+    </LinearLayout>
 
     <View
         android:id="@+id/divider4"

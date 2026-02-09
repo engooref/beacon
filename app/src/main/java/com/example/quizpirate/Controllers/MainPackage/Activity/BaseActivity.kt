@@ -1,50 +1,47 @@
 package com.example.quizpirate.Controllers.MainPackage.Activity
 
-
-import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Bundle
-import android.widget.MediaController
-import android.widget.VideoView
+import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
+import androidx.media3.common.util.UnstableApi
+
+import com.example.quizpirate.App
 import com.example.quizpirate.R
 
-
+@UnstableApi
 open class BaseActivity : AppCompatActivity() {
 
-    protected lateinit var videoView: VideoView
+    private var playerView: androidx.media3.ui.PlayerView? = null
+    protected lateinit var contentHost: FrameLayout
+    private val appPlayer get() = (application as App).player
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // ❗️Toujours le layout commun ici
         setContentView(R.layout.activity_base)
+        playerView = findViewById(R.id.playerView)
+        contentHost = findViewById(R.id.contentHost)
     }
 
-    fun setVideo() {
-        // Récupérer la référence du VideoView
-        videoView = findViewById(R.id.videoView)
-
-        // Chemin d'accès à la vidéo dans res/raw
-        val videoPath = "android.resource://" + packageName + "/" + R.raw.pyro_main_theme
-
-        // Convertir le chemin en URI
-        val uri = Uri.parse(videoPath)
-
-        // Charger la vidéo dans le VideoView
-        videoView.setVideoURI(uri)
-        // Démarrer la lecture de la vidéo en boucle
-        videoView.start()
-        videoView.setOnPreparedListener { mp: MediaPlayer ->
-            // Définir la boucle de la vidéo
-            mp.isLooping = true
-        }
+    /** Appelle ça dans les écrans enfants au lieu de setContentView */
+    protected fun setContentLayout(view: View) {
+        contentHost.removeAllViews()
+        contentHost.addView(view)
     }
 
-    override fun onPause() {
-        super.onPause()
-        videoView.pause()
+    override fun onStart() {
+        super.onStart()
+        playerView?.player = appPlayer
     }
 
     override fun onResume() {
         super.onResume()
-        videoView.start()
+        appPlayer.playWhenReady = true
+    }
+
+    override fun onStop() {
+        playerView?.player = null
+        super.onStop()
     }
 }

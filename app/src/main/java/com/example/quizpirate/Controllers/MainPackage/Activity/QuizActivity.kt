@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.Button
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.lifecycleScope
@@ -16,11 +15,17 @@ import com.example.quizpirate.Controllers.BDD.DAO.UserResponseDao
 import com.example.quizpirate.Controllers.BDD.Entity.QuestionWithResponses
 import com.example.quizpirate.Controllers.BDD.Entity.UserResponse
 import com.example.quizpirate.R
+import com.example.quizpirate.Utils.ArcProgressBar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.math.min
+import kotlin.random.Random
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
+import com.example.quizpirate.databinding.QuizActivityBinding
 
-
+@OptIn(UnstableApi::class)
 class QuizActivity : BaseActivity() {
     //Variable pour les questions
     private val questionList = mutableListOf<QuestionWithResponses>()
@@ -30,15 +35,15 @@ class QuizActivity : BaseActivity() {
     private var nbPoint : Int = 0
     private var nbQuesRep : Int = 0
     private val nbQuesLimit = 10
-    private var nbQuestionTotal : Long = 0
+    private var nbQuestionTotal : Int = 50
 
     //Variable pour le XML
     private lateinit var quesTab : Array<Button>
 
     private lateinit var validBtn : Button
-    private lateinit var timerText : TextView
     private lateinit var  timer : CountDownTimer
-    private lateinit var timerBar : ProgressBar
+    private lateinit var timerBar: ArcProgressBar
+    private lateinit var questionNum: TextView
     private var timeStart : Long = 0
 
     private lateinit var questionDao : QuestionDao
@@ -47,20 +52,16 @@ class QuizActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.quiz_activity)
-        setVideo()
+        val mainBinding = QuizActivityBinding.inflate(layoutInflater)
+        setContentLayout(mainBinding.root)
 
         configIdAndButtons()
-
 
         questionDao = MainActivity.db.questionDao()
         userResponseDao = MainActivity.db.userReponseDao()
 
         // Utilisation d'une coroutine pour effectuer la requête en arrière-plan
         lifecycleScope.launch {
-            nbQuestionTotal = withContext(Dispatchers.IO) {
-                questionDao.countQuestionsByLanguage(MainActivity.res.configuration.locales[0].language.uppercase())
-            }
 
             addQuestion()
             setQuestion()
@@ -78,16 +79,13 @@ class QuizActivity : BaseActivity() {
     }
 
     private fun configTimer() {
-        timerBar.max = MainActivity.timeTimer.toInt()
-        timerBar.progress = 1000
+        timerBar.max = MainActivity.timeTimer.toFloat()
+        timerBar.value = 0f
         timer = object: CountDownTimer(MainActivity.timeTimer, 1000) {
             override fun onTick(millisUntilFinished: Long) {
+                val elapsed = MainActivity.timeTimer - millisUntilFinished
+                timerBar.value = elapsed.toFloat()
 
-                val minutes = millisUntilFinished / 1000 / 60
-                val seconds = (millisUntilFinished / 1000 % 60)
-
-                timerBar.progress += 1000
-                timerText.text = "$minutes min: ${ if (seconds < 10 ) "0" + seconds else seconds}"
             }
 
             override fun onFinish() {
@@ -101,9 +99,9 @@ class QuizActivity : BaseActivity() {
                 val intent = Intent(this@QuizActivity, FinishActivity::class.java)
                 intent.putExtra("point", nbPoint)
                 intent.putExtra("question", nbQuesRep)
+                intent.putExtra("total", nbQuestionTotal)
                 intent.putExtra("temps", "${minutes}min:${seconds}sec")
 
-                timer.cancel()
                 resultLauncher.launch(intent)
 
             }
@@ -112,15 +110,63 @@ class QuizActivity : BaseActivity() {
         timer.start()
     }
 
-    private fun configIdAndButtons() {
-        quesTab = arrayOf(findViewById(R.id.btnRep1),
-            findViewById(R.id.btnRep2),
-            findViewById(R.id.btnRep3),
-            findViewById(R.id.btnRep4))
 
-        validBtn = findViewById(R.id.BtnValid)
-        timerText = findViewById(R.id.TVTimer)
-        timerBar = findViewById(R.id.timerBar)
+    private fun configIdAndButtons() {
+        quesTab = arrayOf(findViewById(R.id.btnAnswer1),
+            findViewById(R.id.btnAnswer2),
+            findViewById(R.id.btnAnswer3),
+            findViewById(R.id.btnAnswer4))
+
+        questionNum = findViewById(R.id.nbQuestion)
+
+        validBtn = findViewById(R.id.btnValidateQuiz)
+        timerBar = findViewById(R.id.arcProgressBar)
+        timerBar.shipScale = 0.1f
+        timerBar.chaserScale = 0.1f
+        timerBar.torpedoScale = 0.1f
+        timerBar.alignToTangent = true
+        timerBar.shipAheadPx = 8f
+
+
+        // 🎯 Chargement des images
+        timerBar.setShipResource(MainActivity.vaisseauChoice)      // vaisseau poursuivi (la cible)
+        timerBar.setChaserResource(R.drawable.polaris)  // vaisseau poursuivant
+        timerBar.setTorpedoResource(R.drawable.torpille)
+
+
+        timerBar.spriteGlobalRatio = 1.2f // grossir tous les sprites
+        timerBar.scaleByStrokeWidth = true
+
+        // petite helper si tu n’as pas l’extension FloatRange.random()
+        fun rand(minF: Float, maxF: Float) = Random.nextFloat() * (maxF - minF) + minF
+
+        timerBar.chaserSpeed  = rand(0.60f, 0.90f)
+        timerBar.chaserLagPct = rand(0.18f, 0.30f)   // lag un peu plus grand = bien derrière
+
+        val gapMin = 0.15f   // 8% de l’arc minimum
+        val gapMax = 0.20f   // jusqu’à 15% possible
+        val gap    = rand(gapMin, gapMax)
+
+        val torpLagMax = (timerBar.chaserLagPct - 0.05f).coerceAtLeast(0f)
+        val torpLagMin = (timerBar.chaserLagPct - gap).coerceAtLeast(0f)
+
+        val lo = min(torpLagMin, torpLagMax)
+        val hi = maxOf(torpLagMin, torpLagMax)
+
+        timerBar.torpedoLagPct = rand(lo, hi)  // => 0 ≤ torpedoLagPct < chaserLagPct - 0.05f
+        val speedDeltaMin = 0.10f
+        val speedDeltaMax = 0.20f
+        val torpMinSpeed  = (timerBar.chaserSpeed + speedDeltaMin)
+        val torpMaxSpeed  = min(0.96f, timerBar.chaserSpeed + speedDeltaMax)
+
+        timerBar.torpedoSpeed = rand(torpMinSpeed, torpMaxSpeed)
+        // Apparition en douceur
+        timerBar.chaserEntryDistancePx = 140f
+        timerBar.chaserAppearRangePct = 0.14f
+        timerBar.torpedoEntryDistancePx = 140f
+        timerBar.torpedoAppearRangePct = 0.10f
+
+
 
         validBtn.text = MainActivity.res.getString(R.string.Texte_ButtonValider)
     }
@@ -130,11 +176,9 @@ class QuizActivity : BaseActivity() {
                 elem ->
             if(it != elem) {
                 elem.isSelected = false
-                elem.background = getDrawable(R.drawable.futurist_degrad)
             }
         }
         it.isSelected = true
-        it.background = getDrawable(R.drawable.futurist_degrad_select)
     }
 
     fun onValidClick(view: View) {
@@ -142,12 +186,15 @@ class QuizActivity : BaseActivity() {
         lifecycleScope.launch(Dispatchers.IO) {
             // Recherche de la réponse sélectionnée dans quesTab
             val selectedIndex = quesTab.indexOfFirst { it.isSelected }
+            quesTab.forEach { it.isSelected = false }
+
             // Si aucune réponse n'est sélectionnée, on prendra -1 comme id de réponse
             val responseId = if (selectedIndex != -1) {
                 val selectedResponse = questionList[index].responses[selectedIndex]
                 // Mise à jour des points si la réponse est correcte
                 if (selectedResponse.rep_bon) {
                     nbPoint += 100 / nbQuestionTotal.toInt()
+                    nbQuesRep++
                 }
                 selectedResponse.rep_id
             } else {
@@ -167,7 +214,6 @@ class QuizActivity : BaseActivity() {
 
             // Mise à jour de l'index et du nombre de questions répondues
             index++
-            nbQuesRep++
 
             // Si toutes les questions ont été traitées, terminer le timer sinon passer à la question suivante
             if (index >= questionList.size) {
@@ -193,9 +239,14 @@ class QuizActivity : BaseActivity() {
                 questionDao.getRandomQuestionsExcluding(currentLang, excludedIds, nbQuesLimit)
             }
         }
-        // Ajoute les questions récupérées à ta liste
-        questionsWithResponses.let { questionList.addAll(it) }
-
+            // Limite le nombre total de questions à nbQuestionTotal
+            val nbRestant = (nbQuestionTotal - questionList.size).toInt().coerceAtLeast(0)
+            val questionsToAdd = if (questionsWithResponses.size > nbRestant) {
+             questionsWithResponses.take(nbRestant)
+            } else {
+             questionsWithResponses
+            }
+        questionList.addAll(questionsToAdd)
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -208,7 +259,12 @@ class QuizActivity : BaseActivity() {
 
         // Récupère la question courante
         val questionItem = questionList[index]
-        findViewById<TextView>(R.id.TVQuestion).text = questionItem.question.que_name
+        findViewById<TextView>(R.id.textQuestion).text = questionItem.question.que_name
+        questionNum.text = buildString {
+            append((index + 1).toString())
+            append("/")
+            append(nbQuestionTotal.toString())
+        }
 
         // Mise à jour des réponses (par exemple sur des boutons ou TextView)
         try {
@@ -217,7 +273,6 @@ class QuizActivity : BaseActivity() {
                 if (pos < questionItem.responses.size) {
                     elem.text = questionItem.responses[pos].rep_name
                     elem.isSelected = false
-                    elem.background = getDrawable(R.drawable.futurist_degrad)
                 }
             }
         } catch (e: Exception) {

@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Quiz Beacon</string>
+    <string name="Texte_Debut">Por favor, inicie as configurações para começar</string>
+    <string name="Texte_AttentePrincipalEsp">Aguardando a chave de acesso</string>
+    <string name="Texte_AttentePrincipal">Por favor, toque na tela para começar</string>
+    <string name="Texte_ChargementPrincipal">Leitura do cartão de acesso</string>
+    <string name="Texte_ButtonPrincipal">Bem-vindo, por favor pressione o botão</string>
+    <string name="Texte_ErreurPrincipal">Retirada prematura do cartão, tente novamente</string>
+    <string name="Texte_AutoriserPrincipal">"Início em 0 "</string>
+    <string name="Texte_RetraitCarte">Por favor, retire o cartão de acesso</string>
+    <string name="Texte_ButtonValider">Validar</string>
+    <string name="Texte_Finish">Tempo esgotado</string>
+    <string name="Text_NbPointRep">"Seu número de pontos é: "</string>
+    <string name="Text_NbQues">O seu número de respostas corretas é:</string>
+    <string name="Text_Nbmail">Adicione o seu nome de utilizador e clique em validar</string>
+    <string name="mmss">1:30</string>
+    <string name="Verif_Info">Informações do jogador</string>
+    <string name="texte_secondes">segundos</string>
+    <string name="texte_seconde">segundo</string>
+    <string name="mainText">Teste os seus conhecimentos… acima das nuvens de Crusader.</string>
+    <string name="Texte_ChoixLangue">Escolha de Idioma</string>
+    <string name="ton_vaisseau">A tua nave:</string>
+</resources>

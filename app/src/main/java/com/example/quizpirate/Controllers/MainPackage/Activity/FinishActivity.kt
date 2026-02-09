@@ -8,16 +8,20 @@ import android.os.CountDownTimer
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.annotation.OptIn
 import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.util.UnstableApi
 import com.example.quizpirate.Controllers.BDD.DAO.UserDao
 import com.example.quizpirate.Controllers.BDD.DAO.UserResponseDao
 import com.example.quizpirate.Controllers.BDD.DAO.UserTempsDao
 import com.example.quizpirate.Controllers.BDD.Entity.UserTemps
-import com.example.quizpirate.Controllers.MainPackage.Activity.MainActivity.Companion.bluetooth
 import com.example.quizpirate.R
+import com.example.quizpirate.databinding.ActivityFinishBinding
+import com.example.quizpirate.databinding.QuizActivityBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@OptIn(UnstableApi::class)
 class FinishActivity : BaseActivity() {
 
     private lateinit var  handle : TextView
@@ -29,11 +33,12 @@ class FinishActivity : BaseActivity() {
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_finish)
-        setVideo()
+        val mainBinding = ActivityFinishBinding.inflate(layoutInflater)
+        setContentLayout(mainBinding.root)
+
         valid = findViewById(R.id.btnValidate)
         findViewById<TextView>(R.id.TVNbPoint).text = MainActivity.res.getString(R.string.Text_NbPointRep) + intent.getIntExtra("point", 0).toString() + "/100"
-        findViewById<TextView>(R.id.TVNbQues).text = MainActivity.res.getString(R.string.Text_NbQues) + intent.getIntExtra("question", 0).toString()
+        findViewById<TextView>(R.id.TVNbQues).text = MainActivity.res.getString(R.string.Text_NbQues) + ' ' + intent.getIntExtra("question", 0).toString() + '/' + intent.getIntExtra("total", 0).toString()
 
         handle = findViewById(R.id.editHandleUser)
 
@@ -68,6 +73,9 @@ class FinishActivity : BaseActivity() {
 
     fun onValid(it : View) {
         lifecycleScope.launch(Dispatchers.IO) {
+            if (handle.text.isEmpty())
+                return@launch
+
             val userHandle = handle.text.toString()
 
             // Recherche d'un utilisateur existant avec le même handle
@@ -118,6 +126,6 @@ class FinishActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        MainActivity.bluetooth?.write("4")
+
     }
 }

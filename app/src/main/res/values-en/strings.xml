@@ -11,10 +11,13 @@
     <string name="Texte_ButtonValider">Validate</string>
     <string name="Texte_Finish">Time\'s up</string>
     <string name="Text_NbPointRep">"Your score is: "</string>
-    <string name="Text_NbQues">"Your total number of questions answered is : "</string>
-    <string name="Text_Nbmail">Check the information above and press the button to validate your quiz</string>
+    <string name="Text_NbQues">Your number of correct answers is:</string>
+    <string name="Text_Nbmail">Add your username and press confirm.</string>
     <string name="mmss">1:30</string>
     <string name="Verif_Info">Player Information</string>
     <string name="texte_secondes">seconds</string>
     <string name="texte_seconde">second</string>
+    <string name="mainText">Test your knowledge… above the clouds of Crusader.</string>
+    <string name="Texte_ChoixLangue">Choose Language</string>
+    <string name="ton_vaisseau">Your ship:</string>
 </resources>

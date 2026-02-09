@@ -1,17 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".Controllers.MainPackage.Activity.BaseActivity">
+    android:background="@android:color/black">
 
-    <VideoView
-        android:id="@+id/videoView"
+    <!-- 🎬 Video en fond -->
+    <androidx.media3.ui.PlayerView
+        android:id="@+id/playerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentTop="true"
-        android:layout_gravity="center"
-        />
+        app:use_controller="false"
+        app:resize_mode="fill"/>
 
-</RelativeLayout>
+    <!-- 🔝 Contenu des écrans par-dessus la vidéo -->
+    <FrameLayout
+        android:id="@+id/contentHost"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@android:color/transparent" />
+</FrameLayout>

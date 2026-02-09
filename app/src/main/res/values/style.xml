@@ -1,10 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="FuturisticProgressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
-        <item name="android:progressDrawable">@drawable/futuristic_progress_bar_drawable</item>
-        <item name="android:indeterminateDrawable">@drawable/futuristic_progress_bar_drawable</item>
-        <item name="android:minHeight">10dp</item>
-        <item name="android:maxHeight">20dp</item>
+    <!-- Thème de l'application Orison Quiz -->
+    <style name="Theme.OrisonQuiz" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Palette du thème -->
+        <item name="colorPrimary">@color/bleu_ciel_doux</item>
+        <item name="colorPrimaryVariant">@color/bleu_nuit_doux</item>
+        <item name="colorSecondary">@color/vert_eau_clair</item>      <!-- Couleur Accent -->
+        <item name="android:colorAccent">@color/vert_eau_clair</item> <!-- Pour compatibilité AppCompat -->
+        <item name="android:textColorPrimary">@color/bleu_nuit_doux</item> <!-- Texte par défaut en bleu nuit doux -->
+        <item name="android:textColorSecondary">@color/bleu_nuit_doux</item>
+        <!-- (Autres attributs de thème éventuellement) -->
     </style>
 
+    <!-- Style pour les boutons clairs translucides (réponses, paramètres, langue) -->
+    <style name="OrisonButtonLight" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@drawable/bg_orison_selector</item>
+        <item name="android:textColor">@color/bleu_nuit_doux</item>    <!-- Texte en bleu nuit (fond clair) -->
+        <item name="android:textAllCaps">false</item>                  <!-- Conserver la casse du texte -->
+    </style>
+
+    <!-- Style pour les boutons accentués (bouton Valider) -->
+    <style name="OrisonButtonAccent" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@null</item>
+        <item name="android:background">@drawable/bg_button_accent</item>
+        <item name="android:textColor">@color/bleu_nuit_doux</item>    <!-- Texte en bleu nuit (fond vert d'eau clair) -->
+        <item name="android:textAllCaps">false</item>
+    </style>
 </resources>

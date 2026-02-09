@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.quizpirate"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.quizpirate"
@@ -54,8 +54,15 @@ dependencies {
     implementation("io.socket:socket.io-client:1.0.0")
     implementation("androidx.activity:activity:1.8.0")
     testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.10.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    implementation("androidx.media3:media3-ui:1.8.0")
+    implementation("androidx.media3:media3-exoplayer:1.8.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    kapt("com.github.bumptech.glide:compiler:4.16.0")
 
     implementation("androidx.room:room-runtime:2.5.0")
     implementation("com.opencsv:opencsv:5.7.1")

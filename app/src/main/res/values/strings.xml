@@ -2,9 +2,9 @@
 <resources>
     <string name="Verif_Info">Informations sur le joueur</string>
     <string name="mmss">1:30</string>
-    <string name="Text_Nbmail">Vérifiez les infos ci-dessus et appuyez sur le bouton pour valider votre quiz</string>
+    <string name="Text_Nbmail">Ajoutez votre pseudo et appuyez sur valider</string>
     <string name="Text_NbPointRep">"Votre nombre de points s'élève à : "</string>
-    <string name="Text_NbQues">"Votre nombre de questions répondues s'élève à : "</string>
+    <string name="Text_NbQues">Votre nombre de bonnes réponses s\'élève à :</string>
     <string name="Texte_Finish">Temps écoulé</string>
     <string name="Texte_ButtonValider">Valider</string>
     <string name="Texte_RetraitCarte">Veuillez retirer la carte d\'accès</string>
@@ -18,4 +18,7 @@
     <string name="app_name">Quiz Beacon</string>
     <string name="texte_secondes">secondes</string>
     <string name="texte_seconde">seconde</string>
+    <string name="mainText">Testez vos connaissances… au-dessus des nuages de Crusader.</string>
+    <string name="Texte_ChoixLangue">Choix de la langue</string>
+    <string name="ton_vaisseau">Ton vaisseau :</string>
 </resources>

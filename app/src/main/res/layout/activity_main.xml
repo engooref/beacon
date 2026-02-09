@@ -1,79 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/containerMain"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:orientation="vertical"
+    android:gravity="end">
 
-    <include layout="@layout/activity_base" />
-
-    <ImageView
-        android:id="@+id/imageView15"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/logogrey" />
-
+    <!-- Boutons secondaires (Langue / Paramètres) en bas à droite -->
     <LinearLayout
-        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:layout_below="@id/imageView15"
-        android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp">
+        android:baselineAligned="false"
+        android:orientation="horizontal"
+        android:gravity="bottom"
+        android:layout_weight="9"
+        >
 
-        <View
-            android:id="@+id/divider2"
-            android:layout_width="wrap_content"
-            android:layout_height="2dp"
-            android:background="@color/white"
-            />
+        <LinearLayout
+            android:id="@+id/panelHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:layout_weight="8.4"
+            android:gravity="center"
+            >
 
-        <!-- TextView -->
-        <TextView
-            android:id="@+id/TextPrinc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="@font/orbitron_medium"
-            android:text="@string/Texte_Debut"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="@dimen/tailleTitre" />
+            <ImageView
+                android:id="@+id/logo"
+                android:layout_width="650dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:adjustViewBounds="true"
+                android:contentDescription="@null"
+                android:src="@drawable/logo" />
 
-        <View
-            android:id="@+id/divider1"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="2dp"
-            android:background="@color/white"/>
+            <TextView
+                android:id="@+id/TextPrinc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/orbitron_medium"
+                android:gravity="center"
+                android:text="@string/Texte_Debut"
+                android:textColor="@color/blanc_nuage"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tagline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="@string/mainText"
+                android:textColor="@color/blanc_nuage"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/panelVaisseau"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="24dp"
+            android:layout_weight="1.6"
+            android:gravity="end"
+            >
+
+            <TextView
+                android:id="@+id/shipLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/orbitron_medium"
+                android:text="@string/ton_vaisseau"
+                android:textColor="@color/blanc_nuage"
+                android:textAlignment="textEnd"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/panelHome"
+                app:layout_constraintTop_toTopOf="@id/panelHome" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/sideImageList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:overScrollMode="ifContentScrolls"
+                android:scrollbars="vertical"
+                app:layout_constraintBottom_toBottomOf="@id/panelHome"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/panelHome"
+                app:layout_constraintTop_toBottomOf="@id/shipLabel" />
+        </LinearLayout>
 
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/BtnParam"
+
+    <LinearLayout
+        android:id="@+id/bottomButtons"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/transparent"
-        android:onClick="onClickParam"
-        android:src="@drawable/parametre" />
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:gravity="bottom"
+        >
 
-    <ImageButton
-        android:id="@+id/LangBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_toStartOf="@id/BtnParam"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/transparent"
-        android:onClick="onChangeLanguage"
-        android:src="@drawable/drapeau_anglais" />
+        <ImageButton
+            android:id="@+id/LangBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"
+            android:onClick="onShowLanguageList"
+            android:src="@null" />
 
-</RelativeLayout>
+        <ImageButton
+            android:id="@+id/BtnParam"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:contentDescription="@null"
+            android:onClick="onClickParam"
+            android:src="@drawable/parametre" />
+    </LinearLayout>
+
+</LinearLayout>

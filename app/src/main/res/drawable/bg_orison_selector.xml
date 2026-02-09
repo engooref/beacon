@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Sélectionné (toggle) -->
+    <item android:state_selected="true" android:state_enabled="true"
+        android:drawable="@drawable/bg_orison_selected"/>
+
+    <!-- Normal -->
+    <item android:drawable="@drawable/bg_orison_background"/>
+</selector>

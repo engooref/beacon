@@ -1,5 +1,6 @@
 package com.example.quizpirate.Utils
 
+import android.util.Log
 import com.example.quizpirate.Controllers.BDD.DAO.QuestionDao
 import com.example.quizpirate.Controllers.BDD.DAO.ResponseDao
 import com.example.quizpirate.Controllers.BDD.Entity.Question
@@ -35,18 +36,6 @@ object CsvUtils {
         }
     }
 
-    /**
-     * Importe les questions et leurs réponses depuis un fichier CSV à l'aide d'OpenCSV.
-     *
-     * Chaque ligne du CSV doit être au format :
-     * Question,Lang,Reponse 1,Reponse 2,Reponse 3,Reponse 4,IdBonneRep
-     *
-     * IdBonneRep est un nombre (de 1 à 4) indiquant la position (1-based) de la bonne réponse.
-     *
-     * @param csvFilePath Le chemin du fichier CSV.
-     * @param questionDao Le DAO pour les questions.
-     * @param responseDao Le DAO pour les réponses.
-     */
     fun importQuestionsFromCsv(
         csvFilePath: File,
         questionDao: QuestionDao,
@@ -54,31 +43,35 @@ object CsvUtils {
     ) {
         try {
             CSVReader(FileReader(csvFilePath)).use { reader ->
-                // Lit la première ligne pour vérifier l'en-tête
-                var line = reader.readNext()
-                if (line != null && line.joinToString(",").trim() == HEADER_IMPORT) {
-                    // Passe l'en-tête
-                    line = reader.readNext()
-                }
-                // Parcourt chaque ligne du fichier CSV
+                var line: Array<String>? = reader.readNext()
                 while (line != null) {
-                    if (line.size >= 7) {
-                        val questionText = line[0].trim()
-                        val lang = line[1].trim()
-                        // Crée et insère la question dans la base
+                    // On vérifie qu'on a exactement 7 colonnes
+                    if (line.size == 7) {
+                        val questionText = line[1].trim()
+                        val lang = line[0].trim()
+
+                        // Insertion de la question
                         val question = Question(que_name = questionText, que_lang = lang)
                         val questionId = questionDao.insertQuestion(question).toInt()
 
-                        // IdBonneRep est 1-based, on convertit en index 0-based
+                        // Conversion en index 0-based ; si invalide, -1 (aucune bonne réponse)
                         val goodIndex = line[6].trim().toIntOrNull()?.minus(1) ?: -1
 
-                        // Insère les 4 réponses (de l'index 2 à 5)
-                        for (i in 2 until 6) {
-                            val responseText = line[i].trim()
-                            val isGood = (i - 2 == goodIndex)
-                            val response = Response(rep_name = responseText, rep_que_id = questionId, rep_bon = isGood)
+                        // Parcours des 4 réponses (colonnes 2,3,4,5)
+                        for (i in 0 until 4) {
+
+                            val responseText = line[2 + i].trim()
+                            val isGood = (i == goodIndex)
+                            val response = Response(
+                                rep_name   = responseText,
+                                rep_que_id = questionId,
+                                rep_bon    = isGood
+                            )
                             responseDao.insertResponse(response)
                         }
+                    } else {
+                        // Optionnel : loguer ou gérer les lignes malformées
+                        Log.w("CSV_IMPORT", "Ligne ignorée, format inattendu : ${line.joinToString()}")
                     }
                     line = reader.readNext()
                 }

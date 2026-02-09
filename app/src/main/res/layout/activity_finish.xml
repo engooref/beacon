@@ -1,90 +1,104 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:focusable="true"
-    android:focusableInTouchMode="true"> <!-- Couleur orange chaude -->
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <include layout="@layout/activity_base" />
-    <!-- TextView au-dessus des champs d'entrée -->
-    <TextView
-        android:id="@+id/TVInfVef"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="24dp"
-        android:textColor="#FFFFFFFF"
-        android:text="@string/Text_Nbmail"
-        android:textSize="@dimen/tailleReponse"
-        />
-
-    <!-- Champs d'entrée -->
-    <LinearLayout
-        android:id="@+id/inputFieldsLayout"
+    <!-- Contrainte principale -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/containFinishLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/TVInfVef"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp"
-        android:gravity="center_horizontal">
+        android:layout_height="match_parent"
+        android:padding="16dp">
 
-        <EditText
-            android:id="@+id/editHandleUser"
+        <!-- Texte au-dessus -->
+
+        <Button
+            android:id="@+id/btnValidate"
+            style="@style/OrisonButtonAccent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="20dp"
+            android:onClick="onValid"
+            android:text="Valider"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/TVInfVef"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/Text_Nbmail"
+            android:textColor="#FFFFFFFF"
+            android:textSize="@dimen/tailleReponse"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Champ d'entrée -->
+        <EditText
+            android:id="@+id/editHandleUser"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@null"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textAlignment="center"
             android:textColor="#FFFFFF"
             android:textColorHint="#FFFFFF"
-            android:hint="Handle"
-            android:textSize="@dimen/tailleReponse" /> <!-- Style holographique -->
+            android:textSize="@dimen/tailleReponse"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/TVInfVef" />
 
+        <!-- Résultats -->
+        <TextView
+            android:id="@+id/TVNbPoint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/Text_NbPointRep"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/tailleReponse"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editHandleUser" />
 
-        <!-- Style holographique -->
+        <TextView
+            android:id="@+id/TVNbQues"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/Text_NbQues"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/tailleReponse"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/TVNbPoint" />
 
-        <!-- Style holographique -->
+        <!-- Bouton -->
 
-    </LinearLayout>
+        <ImageView
+            android:id="@+id/logoQuiz2"
+            android:layout_width="130dp"
+            android:layout_height="80dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="16dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@null"
+            android:maxWidth="560dp"
+            android:src="@drawable/logoblanc"
+            app:layout_constraintBottom_toBottomOf="@+id/btnValidate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnValidate"
+            app:layout_constraintVertical_bias="0.44" />
 
-    <!-- Affichage des résultats -->
-
-    <TextView
-        android:id="@+id/TVNbPoint"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="24dp"
-        android:textColor="#FFFFFF"
-        android:text="@string/Text_NbPointRep"
-        android:textSize="@dimen/tailleReponse" />
-
-    <TextView
-        android:id="@+id/TVNbQues"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/TVNbPoint"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp"
-        android:textColor="#FFFFFF"
-        android:text="@string/Text_NbQues"
-        android:textSize="@dimen/tailleReponse" />
-
-    <!-- Bouton Valider -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnValidate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
-        android:textColor="#FFFFFF"
-        android:background="@drawable/validbutton"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="24dp"
-        android:minWidth="160dp"
-        android:onClick="onValid"
-        android:text="@string/Texte_ButtonValider"
-        android:textSize="@dimen/tailleReponse" />
-
-    <!-- Style holographique -->
-
-</RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

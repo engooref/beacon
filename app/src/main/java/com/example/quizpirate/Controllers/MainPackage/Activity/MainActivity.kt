@@ -15,12 +15,14 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.graphics.Canvas
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.text.InputType
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
@@ -45,11 +47,15 @@ import java.io.File
 import java.util.Locale
 import java.util.Timer
 import java.util.TimerTask
+import androidx.core.graphics.createBitmap
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 
-
-
-@Suppress("UNUSED_EXPRESSION")
+@OptIn(UnstableApi::class) @Suppress("UNUSED_EXPRESSION")
 class MainActivity : BaseActivity() {
 
     private lateinit var mainBinding: ActivityMainBinding
@@ -60,9 +66,14 @@ class MainActivity : BaseActivity() {
 
     //Varible pour le XML
     private lateinit var textPrinc : TextView
+    private lateinit var textSec : TextView
+
+    private lateinit var sideList: RecyclerView
+    private lateinit var sideAdapter: SideImageAdapter
+    private var selectedSideIndex: Int = RecyclerView.NO_POSITION
+
 
     private val REQUEST_CODE_PERM = 1001
-    private val REQUEST_ENABLE_BT = 45000
     private val permissions = mutableListOf(
         Manifest.permission.ACCESS_FINE_LOCATION
     ).apply {
@@ -94,8 +105,7 @@ class MainActivity : BaseActivity() {
                         CsvUtils.importQuestionsFromCsv(tempFile, db.questionDao(), db.responseDao())
                     }
 
-                        // Ouvre un InputStream à partir du URI
-                        // Appel de la fonction d'import qui insère les questions/réponses dans la BDD
+
 
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -133,16 +143,53 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(mainBinding.root)
-
-        setVideo()
+        setContentLayout(mainBinding.root)
 
         textPrinc = findViewById(R.id.TextPrinc)
+        textSec = findViewById(R.id.tagline)
+
+        // 2) RecyclerView
+        sideList = findViewById(R.id.sideImageList)
+        sideList.setHasFixedSize(true)
+        sideList.itemAnimator = DefaultItemAnimator()
+        // >>> IMPORTANT : LayoutManager <<<
+        sideList.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        // Si tu veux horizontal : LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+
+        val shipImages: List<Int> = loadDrawablesByPrefix("vaisseau_")
+
+        // 3) Adapter + callback
+        sideAdapter = SideImageAdapter(shipImages) { position ->
+
+            val resId = shipImages.getOrNull(position) ?: return@SideImageAdapter
+            selectedSideIndex = position
+
+            vaisseauChoice = resId                    // ⬅️ tu as l'ID R.drawable ici
+            sideAdapter.setSelectedIndex(position)
+
+        }
+        sideList.adapter = sideAdapter
+
+        val restored = savedInstanceState?.getInt("sel", RecyclerView.NO_POSITION) ?: RecyclerView.NO_POSITION
+        if (restored in shipImages.indices) {
+            selectedSideIndex = restored
+            vaisseauChoice = shipImages[restored]
+            sideAdapter.setSelectedIndex(restored)
+            sideList.scrollToPosition(restored)
+
+        } else if (shipImages.isNotEmpty()) {
+            // ✅ Sélection par défaut
+            selectedSideIndex = 0
+            vaisseauChoice = shipImages[0]
+            sideAdapter.setSelectedIndex(0)
+            sideList.scrollToPosition(0)
+
+        }
 
         db = AppDatabase.getDatabase(this)
 
         res = getResourcesForLocale(this, Locale("en"))
-        onChangeLanguage(textPrinc)
+        onChangeLanguage("fr")
 
         // Vérifier les permissions
         if (!allPermissionsGranted()) {
@@ -150,7 +197,29 @@ class MainActivity : BaseActivity() {
         }
 
         bluetoothAdapter = (getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager).adapter
+        val sharedPref = getSharedPreferences("quiz", MODE_PRIVATE)
+        timeTimer = sharedPref.getLong("timeTimer", timeTimer)
 
+        idString = R.string.Texte_AttentePrincipal
+        textPrinc.text = res.getString(idString)
+        mainBinding.root.setOnClickListener {
+            val timer = Timer()
+            timer.schedule(MyTimerTask(this, timer), 0, 1000)
+            mainBinding.root.setOnClickListener {null}
+        }
+    }
+
+    private fun loadDrawablesByPrefix(prefix: String): List<Int> {
+        val drawClass = R.drawable::class.java
+        val ids = mutableListOf<Int>()
+        for (field in drawClass.fields) {
+            if (field.name.startsWith(prefix)) {
+                try { ids += field.getInt(null) } catch (_: Exception) {}
+            }
+        }
+        return ids.sortedBy { id ->
+            try { resources.getResourceEntryName(id) } catch (_: Exception) { id.toString() }
+        }
     }
 
     private fun allPermissionsGranted() = permissions.all {
@@ -161,7 +230,7 @@ class MainActivity : BaseActivity() {
     fun onClickParam(view : View) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Entrez le mot de passe")
-
+        builder.setCancelable(false)
         // Création d'un EditText pour saisir le mot de passe
         val input = EditText(this)
         input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
@@ -183,8 +252,12 @@ class MainActivity : BaseActivity() {
             dialog.cancel()
         }
 
+        val dialog = builder.create().apply {
+            // empêche la fermeture par tap à l’extérieur
+            setCanceledOnTouchOutside(false)
+        }
 
-        builder.show()
+        dialog.show()
     }
 
     @SuppressLint("CutPasteId", "SetTextI18n")
@@ -192,6 +265,8 @@ class MainActivity : BaseActivity() {
         val dialog = Dialog(this)
         dialog.setContentView(R.layout.popup_settings)
         dialog.setTitle("Paramètres")
+        dialog.setCanceledOnTouchOutside(false)
+        dialog.setCancelable(false)
 
         val sharedPref = getSharedPreferences("quiz", MODE_PRIVATE)
 
@@ -317,25 +392,19 @@ class MainActivity : BaseActivity() {
 
         val builder = AlertDialog.Builder(this)
             .setTitle("Sélectionnez un appareil")
-            .setAdapter(deviceAdapter) { dialog, which ->
+            .setAdapter(deviceAdapter) { _, which ->
                 val selectedDevice = discoveredDevices[which]
                 Toast.makeText(this,
                     "Sélectionné : ${selectedDevice.name ?: selectedDevice.address}",
                     Toast.LENGTH_SHORT).show()
 
-                bluetooth = bluetoothAdapter?.let {
-                    BluetoothManagerPerso(it, selectedDevice) {
-                        fun onDataReceived(data: String) {
-                            messageReceive(data)
-                        }
+                bluetooth = bluetoothAdapter?.let { adapter ->
+                    BluetoothManagerPerso(adapter, selectedDevice) { data ->
+                        // onDataReceived → on écrit directement ce qu’on veut faire
+                        messageReceive(data)
+                    }.apply {
+                        connect();
                     }
-                }
-
-                val status = findViewById<View>(R.id.status_indicator)
-                status.background = if (bluetooth?.connect() == true) {
-                    ContextCompat.getDrawable(this, R.drawable.circle_connected)
-                } else {
-                    ContextCompat.getDrawable(this, R.drawable.circle_disconnected)
                 }
 
             }
@@ -370,24 +439,6 @@ class MainActivity : BaseActivity() {
         csvFilePickerLauncher.launch("*/*")
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    fun onChangeLanguage(view : View) {
-        res = getResourcesForLocale(this, Locale(
-            if (res.configuration.locales[0].language == "fr")
-                "en"
-            else
-                "fr"
-        ))
-
-        textPrinc.text = res.getString(idString)
-        findViewById<ImageButton>(R.id.LangBtn).setImageDrawable(
-            getDrawable(
-                if(res.configuration.locales[0].language == "fr") R.drawable.drapeau_anglais
-                else R.drawable.drapeau_francais
-            )
-        )
-
-    }
 
     private fun getResourcesForLocale(context: Context, locale: Locale): Resources {
         val configuration = Configuration(context.resources.configuration)
@@ -447,6 +498,7 @@ class MainActivity : BaseActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             findViewById<ImageButton>(R.id.LangBtn).isEnabled = true
             findViewById<ImageButton>(R.id.BtnParam).isEnabled = true
+            initLaunch = false
 
             if (bluetooth == null) {
                 idString = R.string.Texte_AttentePrincipal
@@ -456,6 +508,10 @@ class MainActivity : BaseActivity() {
                     timer.schedule(MyTimerTask(this, timer), 0, 1000)
                     mainBinding.root.setOnClickListener {null}
                 }
+            } else {
+                bluetooth?.write("4");
+
+
             }
         }
     }
@@ -501,7 +557,7 @@ class MainActivity : BaseActivity() {
             user = db.userDao().getUserById(db.userDao().insertUser(User()))!!
 
         }
-        }
+    }
 
     companion object {
         lateinit var db : AppDatabase
@@ -510,5 +566,63 @@ class MainActivity : BaseActivity() {
         var timeTimer : Long = 90000
         lateinit var res : Resources
         var initLaunch : Boolean = false
+        var vaisseauChoice: Int = 0
+        val LANGUAGES = listOf(
+            LanguageItem("English", "en", R.drawable.drapeau_anglais),
+            LanguageItem("Français", "fr", R.drawable.drapeau_francais),
+            LanguageItem("Italian", "it", R.drawable.drapeau_italien),
+            LanguageItem("Portuguese", "pt", R.drawable.drapeau_portugais),
+            LanguageItem("Spanish", "es", R.drawable.drapeau_espagne)
+        )
     }
+
+    data class LanguageItem(val name: String, val code: String, val flagResId: Int)
+
+    fun onShowLanguageList(v: View) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(res.getString(R.string.Texte_ChoixLangue))
+        val items = LANGUAGES.map { it.name }
+        val flags = LANGUAGES.map { it.flagResId }
+        val adapter = object : ArrayAdapter<String>(this, android.R.layout.select_dialog_item, items) {
+            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                val view = super.getView(position, convertView, parent)
+                val textView = view.findViewById<TextView>(android.R.id.text1)
+                val drawable = ContextCompat.getDrawable(context, flags[position])
+                drawable?.setBounds(0, 0, 70, 70) // 64x64 pixels, ajuste selon besoin
+                textView.setCompoundDrawables(drawable, null, null, null)
+                textView.compoundDrawablePadding = 24
+                return view
+            }
+        }
+        builder.setAdapter(adapter) { _, which ->
+            val lang = LANGUAGES[which]
+            onChangeLanguage(lang.code)
+        }
+        builder.show()
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    fun onChangeLanguage(langCode: String) {
+        res = getResourcesForLocale(this, Locale(langCode))
+        textPrinc.text = res.getString(idString)
+        textSec.text = res.getString(R.string.mainText)
+        findViewById<TextView>(R.id.shipLabel).text = res.getString(R.string.ton_vaisseau)
+        val lang = LANGUAGES.firstOrNull { it.code == langCode }
+        val imageButton = findViewById<ImageButton>(R.id.LangBtn)
+        val resId = lang?.flagResId ?: R.drawable.drapeau_francais
+        val drawable = ContextCompat.getDrawable(this, resId)
+        if (drawable != null) {
+            val density = resources.displayMetrics.density
+            val sizePx = (70 * density).toInt()
+            val bitmap = createBitmap(sizePx, sizePx)
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, sizePx, sizePx)
+            drawable.draw(canvas)
+            imageButton.setImageBitmap(bitmap)
+        } else {
+            imageButton.setImageResource(R.drawable.drapeau_francais)
+        }
+    }
+
+
 }

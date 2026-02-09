@@ -61,7 +61,7 @@
         android:id="@+id/BtnSuppBDD"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/red"
+        android:backgroundTint="@android:color/holo_red_dark"
         android:onClick="onClickDeleteBdd"
         android:text="Vider la BDD" />
 
@@ -82,12 +82,6 @@
             android:layout_height="wrap_content"
             android:onClick="onClickBluethooth"
             android:text="Connexion ESP" />
-
-        <View
-            android:id="@+id/status_indicator"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/circle_disconnected"/>
 
     </LinearLayout>
 

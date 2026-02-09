@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="white">#FFFFFF</color>
-    <color name="red">#FF0000</color>
-    <color name="green">#00FF00</color>
+    <!-- Couleurs principales du thème Orison -->
+    <color name="bleu_ciel_doux">#D0E9F7</color>       <!-- Bleu ciel doux -->
+    <color name="blanc_nuage">#F8F9FA</color>          <!-- Blanc nuageux (presque blanc) -->
+    <color name="rose_peche_clair">#F8D0D3</color>     <!-- Rose pêche clair -->
+    <color name="bleu_nuit_doux">#4A5A72</color>       <!-- Bleu nuit doux (pour contrastes) -->
+    <color name="vert_eau_clair">#ACEFBB</color>       <!-- Vert d’eau clair (couleur accent) -->
+
+    <!-- Variantes translucides pour effets d'overlay et de "verre dépoli" -->
+    <color name="bleu_nuit_translucide">#524A5A72</color>   <!-- Bleu nuit doux ~80% opacité (overlay sombre) -->
+    <color name="blanc_translucide">#B3F8F9FA</color>       <!-- Blanc nuage ~70% opacité (verre dépoli) -->
+    <color name="blanc_translucide_fort">#CCF8F9FA</color>  <!-- Blanc nuage ~80% opacité (boutons lumineux) -->
 </resources>
